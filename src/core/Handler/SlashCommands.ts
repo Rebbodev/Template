@@ -1,5 +1,5 @@
 import { red } from 'colorette';
-import { Guild } from 'discord.js';
+import { EmbedBuilder, Guild, Interaction } from 'discord.js';
 
 import { BotClient } from '../..';
 import { SlashCommandsRaw } from '../../components/RawCollecter';
@@ -14,8 +14,9 @@ export const SlashCommands: {
     [key: string]: SlashCommand;
 } = {};
 //Creating and deleteing commands
-export const SlashCommandHandler: DiscordEvent = {
+export const E_SlashCommandHandler: DiscordEvent = {
     event: 'ready',
+    // eslint-disable-next-line sonarjs/cognitive-complexity
     run: async () => {
         if (!ScEnabled) return;
 
@@ -40,9 +41,71 @@ export const SlashCommandHandler: DiscordEvent = {
                 ? new GuildCommand(guilds)
                 : new SlashCommandClass(guilds);
 
-            SlashCommands[cmd.data.name] = cmd;
+            SlashCommands[cmd.data.name.toLowerCase()] = cmd;
 
-            Command.create(cmd.data.name, cmd.data);
+            const { data, kill, update } = cmd;
+            const { name } = data;
+
+            if (!kill) {
+                await Command.create(name, data);
+            } else if (kill) {
+                await Command.delete(name);
+            } else if (update) {
+                await Command.edit(name, data);
+            }
         }
+
+        for (const guildId of ScGuilds) {
+            const guild = BotClient.guilds.cache.get(guildId);
+            const Commands = await guild?.commands.fetch();
+
+            const Command = new GuildCommand(guilds);
+
+            if (Commands) {
+                // eslint-disable-next-line unicorn/no-array-for-each
+                Commands.forEach(async (command) => {
+                    if (!SlashCommands[command.name]) {
+                        Command.delete(command.name);
+                    }
+                });
+            }
+        }
+
+        const AppCommands = await BotClient.application?.commands.fetch();
+
+        // eslint-disable-next-line unicorn/no-array-for-each
+        AppCommands?.forEach(async (command) => {
+            const Command = new SlashCommandClass(guilds);
+
+            if (!SlashCommands[command.name]) {
+                Command.delete(command.name);
+            }
+        });
+    },
+};
+
+export const E_SlashCommandListner: DiscordEvent = {
+    event: 'interactionCreate',
+    run: async (interaction: Interaction) => {
+        if (!interaction.isChatInputCommand()) return;
+
+        const cmd = SlashCommands[interaction.commandName.toLowerCase()];
+
+        const cmdNotFound = new EmbedBuilder()
+            .setColor('#303434')
+            .setDescription(
+                'Sorry but the command this command is not available!'
+            );
+
+        if (!cmd) {
+            await interaction.reply({
+                embeds: [cmdNotFound],
+                ephemeral: true,
+            });
+
+            return;
+        }
+
+        await cmd.run(interaction);
     },
 };

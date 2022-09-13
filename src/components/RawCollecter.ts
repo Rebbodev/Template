@@ -1,11 +1,16 @@
+import { E_LegacyCommandListner } from '../core/Handler/LegacyCommands';
 import {
-    DiscordEvent,
-    LegacyCommand,
-    SlashCommand,
-} from '../types/componentTypes';
+    E_SlashCommandHandler,
+    E_SlashCommandListner,
+} from '../core/Handler/SlashCommands';
+import { DiscordEvent, SlashCommand } from '../types/componentTypes';
+import { E_Ready } from './events/Ready';
 //Events and Commands
-import { ReadyEvent } from './events/readyEvent';
 
 export const SlashCommandsRaw: SlashCommand[] = [];
-export const DiscordEventsRaw: DiscordEvent[] = [ReadyEvent];
-export const LegacyCommandsRaw: LegacyCommand[] = [];
+export const DiscordEventsRaw: DiscordEvent[] = [
+    E_Ready,
+    E_LegacyCommandListner,
+    E_SlashCommandListner,
+    E_SlashCommandHandler,
+];

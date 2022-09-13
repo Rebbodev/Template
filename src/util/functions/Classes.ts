@@ -9,9 +9,14 @@ export class SlashCommand {
         this.guild = guild;
     }
 
-    create(name: string, data: ChatInputApplicationCommandData) {
-        BotClient.application?.commands.create(data);
-        console.log(`Successfully created ${name} application command...`);
+    async create(name: string, data: ChatInputApplicationCommandData) {
+        const FetchedCommands = await BotClient.application?.commands.fetch();
+        const Command = FetchedCommands?.find((x) => x.name === name);
+
+        if (!Command) {
+            BotClient.application?.commands.create(data);
+            console.log(`Successfully created ${name} application command...`);
+        }
     }
 
     async delete(name: string) {

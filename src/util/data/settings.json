@@ -4,5 +4,5 @@
     "LcEnabled": true,
     "ScEnabled": true,
 
-    "ScGuilds": ["GUILD_ID", "GUILD_ID"]
+    "ScGuilds": []
 }

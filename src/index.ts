@@ -12,8 +12,11 @@ export const BotClient = new Client({
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.GuildPresences,
         GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildMessages,
     ],
 });
+
+console.log('New discord client created...');
 
 export const GLOBALS = {
     BotToken: proccessENV.BOT_TOKEN,

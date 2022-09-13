@@ -10,7 +10,7 @@ export type SlashCommand = {
     data: ChatInputApplicationCommandData;
     kill?: boolean;
     update: boolean;
-    requiredRoles?: { roles: string[]; admin: boolean };
+    requiredRoles?: { roles: string[]; admin?: boolean };
     guildOnly: boolean;
     run: (interaction: Interaction) => Promise<any>;
 };
@@ -25,6 +25,6 @@ export type LegacyCommand = {
     description: string;
     category?: string;
     syntax?: string;
-    requiredRoles?: { roles: string[]; admin?: boolean };
+    requiredRoles?: { roles: string[]; admin?: boolean; allRoles?: boolean };
     run: (message: Message, arguments_: string[]) => Promise<any>;
 };
