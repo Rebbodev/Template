@@ -4,6 +4,7 @@ import {
     ClientEvents,
     Interaction,
     Message,
+    PermissionResolvable,
 } from 'discord.js';
 
 export type SlashCommand = {
@@ -20,11 +21,16 @@ export type DiscordEvent = {
     run: (...arguments_: any[]) => Promise<void>;
 };
 
+30;
 export type LegacyCommand = {
     name: string;
     description: string;
     category?: string;
     syntax?: string;
     requiredRoles?: { roles: string[]; admin?: boolean; allRoles?: boolean };
+    permission?: PermissionResolvable;
+    delay?: { delay: number; gloabl: boolean };
+    doNotRegister?: boolean;
+    developerMode?: boolean;
     run: (message: Message, arguments_: string[]) => Promise<any>;
 };
