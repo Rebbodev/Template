@@ -1,8 +1,8 @@
 {
-    "DevID": "984027568166539265",
-    "Prefix": "!",
-    "LcEnabled": true,
-    "ScEnabled": true,
+    "dev-id": "984027568166539265",
+    "prefix": "!",
+    "lc-enabled": true,
+    "sc-enabled": true,
 
-    "ScGuilds": []
+    "sc-guilds": []
 }

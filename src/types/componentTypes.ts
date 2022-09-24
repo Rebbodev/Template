@@ -13,6 +13,8 @@ export type SlashCommand = {
     update: boolean;
     requiredRoles?: { roles: string[]; admin?: boolean };
     guildOnly: boolean;
+    delay?: { delay: number; gloabl: boolean };
+    developerMode?: boolean;
     run: (interaction: Interaction) => Promise<any>;
 };
 

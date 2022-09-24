@@ -39,4 +39,30 @@ export class LegacyCommandsManager {
 
         return commandsObject;
     }
+
+    helpMenu(ignore?: string[]): object {
+        const helpCategory: { [key: string]: string } = {};
+
+        for (const cmd of this.commands) {
+            const syntaxString = cmd.syntax ? ` ${cmd.syntax}` : '';
+            const newString = `\`{PREFIX}${cmd.name}${syntaxString}\`\n*${cmd.description}*\n\n`;
+
+            if (
+                cmd.category &&
+                !cmd.doNotRegister &&
+                !cmd.developerMode &&
+                ((ignore && !ignore.includes(cmd.category)) || !ignore)
+            ) {
+                const Category = helpCategory[cmd.category.toLocaleLowerCase()];
+
+                if (Category) {
+                    helpCategory[cmd.category.toLocaleLowerCase()] += newString;
+                } else {
+                    helpCategory[cmd.category.toLocaleLowerCase()] = newString;
+                }
+            }
+        }
+
+        return helpCategory;
+    }
 }

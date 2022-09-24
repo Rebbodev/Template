@@ -1,41 +1,17 @@
 import { Message } from 'discord.js';
 
-import { DiscordEvent, LegacyCommand } from '../../types/componentTypes';
-import { LcEnabled, Prefix } from '../../util/data/settings.json';
+import { GLOBALS } from '../..';
+import { legacyCommandRaw } from '../../components/RawCollecter';
+import { DiscordEvent } from '../../types/componentTypes';
 import { LegacyRules } from './Rules/LegacyRules';
 
-export const LegacyCommands: {
-    [key: string]: LegacyCommand;
-} = {};
-
-export const helpMenu: {
-    [key: string]: string;
-} = {};
-
-export const LegacyCommandsRaw: LegacyCommand[] = [];
-
 // eslint-disable-next-line sonarjs/no-empty-collection
-for (const cmd of LegacyCommandsRaw) {
-    LegacyCommands[cmd.name] = cmd;
-
-    const syntax = cmd.syntax ? ` ${cmd.syntax}` : '';
-
-    const CommandLine = `\`${Prefix}${cmd.name}${syntax}\`\n${cmd.description}\n\n'`;
-
-    if (cmd.category) {
-        const Category = helpMenu[cmd.category];
-
-        if (Category) {
-            helpMenu[cmd.category] += CommandLine;
-        } else {
-            helpMenu[cmd.category] = CommandLine;
-        }
-    }
-}
 
 export const E_LegacyCommandListner: DiscordEvent = {
     event: 'messageCreate',
     run: async (message: Message) => {
+        const { Prefix, LcEnabled } = GLOBALS;
+
         if (
             !LcEnabled ||
             !message.content.toLowerCase().startsWith(Prefix.toLowerCase())
@@ -49,7 +25,7 @@ export const E_LegacyCommandListner: DiscordEvent = {
 
         const arguments_ = splitContent.slice(1);
 
-        const cmd = LegacyCommands[commandName];
+        const cmd = legacyCommandRaw.getCmds()[commandName];
 
         if (!cmd) return;
 

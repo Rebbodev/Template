@@ -1,6 +1,6 @@
 import { ChatInputApplicationCommandData, Guild } from 'discord.js';
 
-import { BotClient } from '../..';
+import { BotClient } from '../../..';
 
 const noGuild = 'No guilds were provided for commands to be registered!';
 

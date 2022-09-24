@@ -1,14 +1,13 @@
 import { red } from 'colorette';
 import { EmbedBuilder, Guild, Interaction } from 'discord.js';
 
-import { BotClient } from '../..';
+import { BotClient, GLOBALS } from '../..';
 import { SlashCommandsRaw } from '../../components/RawCollecter';
 import { DiscordEvent, SlashCommand } from '../../types/componentTypes';
-import { ScEnabled, ScGuilds } from '../../util/data/settings.json';
 import {
     GuildCommand,
     SlashCommand as SlashCommandClass,
-} from '../../util/functions/Classes';
+} from '../../util/functions/Slash-Commands/manager';
 
 export const SlashCommands: {
     [key: string]: SlashCommand;
@@ -18,7 +17,7 @@ export const E_SlashCommandHandler: DiscordEvent = {
     event: 'ready',
     // eslint-disable-next-line sonarjs/cognitive-complexity
     run: async () => {
-        if (!ScEnabled) return;
+        const { ScEnabled, ScGuilds } = GLOBALS;
 
         const guilds: Guild[] = [];
 
@@ -36,6 +35,7 @@ export const E_SlashCommandHandler: DiscordEvent = {
             }
         }
 
+        // Creates, deletes and edits commands
         for (const cmd of SlashCommandsRaw) {
             const Command = cmd.guildOnly
                 ? new GuildCommand(guilds)
@@ -55,17 +55,18 @@ export const E_SlashCommandHandler: DiscordEvent = {
             }
         }
 
+        // Checks if all registered guild commands are actually available in the file if not it will remove them
         for (const guildId of ScGuilds) {
             const guild = BotClient.guilds.cache.get(guildId);
-            const Commands = await guild?.commands.fetch();
 
-            const Command = new GuildCommand(guilds);
+            if (guild) {
+                const commands = await guild.commands.fetch();
 
-            if (Commands) {
-                // eslint-disable-next-line unicorn/no-array-for-each
-                Commands.forEach(async (command) => {
-                    if (!SlashCommands[command.name]) {
-                        Command.delete(command.name);
+                commands.map((cmd) => {
+                    const findCmd = SlashCommands[cmd.name];
+
+                    if (!findCmd || !findCmd.guildOnly) {
+                        guild.commands.delete(cmd.id);
                     }
                 });
             }
@@ -77,10 +78,35 @@ export const E_SlashCommandHandler: DiscordEvent = {
         AppCommands?.forEach(async (command) => {
             const Command = new SlashCommandClass(guilds);
 
-            if (!SlashCommands[command.name]) {
+            const cmd = SlashCommands[command.name];
+
+            if (!cmd || cmd.guildOnly) {
                 Command.delete(command.name);
             }
         });
+
+        if (!ScEnabled) {
+            for (const guildId of ScGuilds) {
+                const guild = BotClient.guilds.cache.get(guildId);
+
+                if (guild) {
+                    const commands = await guild.commands.fetch();
+
+                    commands.map((cmd) => {
+                        guild.commands.delete(cmd.id);
+                    });
+                }
+            }
+
+            const AppCommands = await BotClient.application?.commands.fetch();
+
+            // eslint-disable-next-line unicorn/no-array-for-each
+            AppCommands?.map((command) => {
+                const Command = new SlashCommandClass(guilds);
+
+                Command.delete(command.name);
+            });
+        }
     },
 };
 
