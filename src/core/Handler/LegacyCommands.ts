@@ -3,7 +3,7 @@ import { Message } from 'discord.js';
 import { GLOBALS } from '../..';
 import { legacyCommandRaw } from '../../components/RawCollecter';
 import { DiscordEvent } from '../../types/componentTypes';
-import { LegacyRules } from './Rules/LegacyRules';
+import { LegacyRulesArray } from './Rules/LegacyRules';
 
 // eslint-disable-next-line sonarjs/no-empty-collection
 
@@ -31,7 +31,7 @@ export const E_LegacyCommandListner: DiscordEvent = {
 
         let Permission = true;
 
-        for (const rule of LegacyRules) {
+        for (const rule of LegacyRulesArray) {
             const call = rule.run(message, cmd);
 
             if (!call) Permission = false;

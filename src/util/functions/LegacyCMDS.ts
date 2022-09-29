@@ -13,7 +13,7 @@ export function LegacyBuilder(
             admin?: boolean;
             allRoles?: boolean;
         };
-        permission?: PermissionResolvable;
+        permission?: PermissionResolvable[];
         delay?: { delay: number; gloabl: boolean };
         doNotRegister?: boolean;
         developerMode?: boolean;

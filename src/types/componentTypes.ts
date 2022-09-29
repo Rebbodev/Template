@@ -30,7 +30,7 @@ export type LegacyCommand = {
     category?: string;
     syntax?: string;
     requiredRoles?: { roles: string[]; admin?: boolean; allRoles?: boolean };
-    permission?: PermissionResolvable;
+    permission?: PermissionResolvable[];
     delay?: { delay: number; gloabl: boolean };
     doNotRegister?: boolean;
     developerMode?: boolean;

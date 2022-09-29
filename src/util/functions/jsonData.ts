@@ -32,10 +32,6 @@ export class JsonData {
 
         return object[name];
     }
-    /**
-     *
-     * @param location - put the nest path to where the data should be! (do not include the name of the new property!)
-     */
 
     addData(
         name: string,
