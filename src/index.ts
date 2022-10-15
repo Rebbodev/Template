@@ -2,6 +2,7 @@ import { Client, GatewayIntentBits } from 'discord.js';
 import { config as environmentConfig } from 'dotenv';
 
 import { build } from './core/projectBuilder';
+// import delayData from './util/data/delays.json';
 import { JsonData } from './util/functions/jsonData';
 
 const JsonCtrl = new JsonData('/src/util/data/settings.json');

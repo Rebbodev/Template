@@ -1,8 +1,13 @@
 import { EmbedBuilder, Message } from 'discord.js';
-import { writeFileSync } from 'node:fs';
 
 import { LegacyCommand } from '../../../types/componentTypes';
-import { JsonData } from '../../../util/functions/jsonData';
+import L_globalDelays from './../../../util/data/legacy-delays/global.json';
+import L_userDelays from './../../../util/data/legacy-delays/user.json';
+
+export const globalLegacyDelays: { [key: string]: number } | object =
+    L_globalDelays;
+export const userLegacyDelays: { [key: string]: number } | object =
+    L_userDelays;
 
 export type LegacyRules = {
     ruleName: string;
@@ -73,55 +78,15 @@ const LR_PermissionRequired: LegacyRules = {
     },
 };
 
-const LR_Delays: LegacyRules = {
-    ruleName: 'Command Delays',
-    run: (message: Message, cmd: LegacyCommand) => {
-        if (!cmd.delay) return true;
-
-        const { delay, gloabl } = cmd.delay;
-
-        const DelayData = new JsonData('/src/util/data/delays.json');
-        const mainData: any = DelayData.getAll();
-
-        const getData = DelayData.getOne('legacy');
-        const delayType: { type: string; dataName: string } = gloabl
-            ? { type: 'global', dataName: cmd.name }
-            : {
-                  type: 'perUser',
-                  dataName: `${message.member?.user.id}_${cmd.name}`,
-              };
-        const findDataType = getData[delayType.type];
-        const findData = findDataType[delayType.dataName];
-        let Grant = false;
-        const time = Date.now() + delay;
-        const errorString = `This command is on cooldown and can be used again in ${
-            time - Date.now()
-        }`;
-        const errorEmbed = new EmbedBuilder().setDescription(errorString);
-
-        if (!findDataType) {
-            mainData[delayType.type] = {};
-            mainData[delayType.type][delayType.dataName] = time;
-        } else if (findDataType && !findData) {
-            mainData[delayType.type][delayType.dataName] = time;
-        } else if (findDataType && findData && findData - Date.now() <= 0) {
-            mainData[delayType.type][delayType.dataName] = time;
-            Grant = true;
-        }
-
-        writeFileSync(
-            process.cwd() + '/src/util/data/delays.json',
-            JSON.stringify(mainData)
-        );
-
-        if (!Grant) message.reply({ embeds: [errorEmbed] });
-
-        return Grant;
-    },
-};
+// const LR_Delays: LegacyRules = {
+//     ruleName: 'Command Delays',
+//     run: (message: Message, cmd: LegacyCommand) => {
+//         if (!cmd.delay) return true;
+//     },
+// };
 
 export const LegacyRulesArray: LegacyRules[] = [
     LegacyRolesRequired,
     LR_PermissionRequired,
-    LR_Delays,
+    // LR_Delays,
 ];

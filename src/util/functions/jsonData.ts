@@ -60,9 +60,25 @@ export class JsonData {
         writeFileSync(filePath, string);
     }
 
-    deleteData(name: 'string') {
+    deleteData(name: string) {
         const object: any = this.getAll();
 
         delete object[name];
+
+        const filePath = this.path.startsWith('/')
+            ? process.cwd() + this.path
+            : process.cwd() + `/${this.path}`;
+
+        writeFileSync(filePath, JSON.stringify(object));
+    }
+
+    writeBlank(object: object) {
+        const string_ = JSON.stringify(object);
+
+        const filePath = this.path.startsWith('/')
+            ? process.cwd() + this.path
+            : process.cwd() + `/${this.path}`;
+
+        writeFileSync(filePath, string_);
     }
 }
