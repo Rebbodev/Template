@@ -13,7 +13,7 @@ export type SlashCommand = {
     update: boolean;
     requiredRoles?: { roles: string[]; admin?: boolean };
     guildOnly: boolean;
-    delay?: { delay: number; gloabl: boolean };
+    cooldown?: { delay: number; gloabl: boolean };
     developerMode?: boolean;
     run: (interaction: Interaction) => Promise<any>;
 };
@@ -31,7 +31,7 @@ export type LegacyCommand = {
     syntax?: string;
     requiredRoles?: { roles: string[]; admin?: boolean; allRoles?: boolean };
     permission?: PermissionResolvable[];
-    delay?: { delay: number; gloabl: boolean };
+    cooldown?: { delay: number; gloabl: boolean };
     doNotRegister?: boolean;
     developerMode?: boolean;
     run: (message: Message, arguments_: string[]) => Promise<any>;

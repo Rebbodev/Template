@@ -1,13 +1,13 @@
 import { EmbedBuilder, Message } from 'discord.js';
+import ms from 'ms';
 
+import { GLOBALS } from '../../..';
 import { LegacyCommand } from '../../../types/componentTypes';
 import L_globalDelays from './../../../util/data/legacy-delays/global.json';
 import L_userDelays from './../../../util/data/legacy-delays/user.json';
 
-export const globalLegacyDelays: { [key: string]: number } | object =
-    L_globalDelays;
-export const userLegacyDelays: { [key: string]: number } | object =
-    L_userDelays;
+export const globalLegacyDelays: { [key: string]: number } = L_globalDelays;
+export const userLegacyDelays: { [key: string]: number } = L_userDelays;
 
 export type LegacyRules = {
     ruleName: string;
@@ -78,15 +78,96 @@ const LR_PermissionRequired: LegacyRules = {
     },
 };
 
-// const LR_Delays: LegacyRules = {
-//     ruleName: 'Command Delays',
-//     run: (message: Message, cmd: LegacyCommand) => {
-//         if (!cmd.delay) return true;
-//     },
-// };
+const LR_DelaysGlobal: LegacyRules = {
+    ruleName: 'Command Delays',
+    run: (message: Message, cmd: LegacyCommand) => {
+        if (!cmd.cooldown?.gloabl) return true;
+
+        let Grant = false;
+
+        const callDelayData = globalLegacyDelays[cmd.name];
+
+        if (!callDelayData) {
+            Grant = true;
+            globalLegacyDelays[cmd.name] = Date.now() + cmd.cooldown.delay;
+        } else if (callDelayData) {
+            if (callDelayData - Date.now() <= 0) {
+                Grant = true;
+                globalLegacyDelays[cmd.name] = Date.now() + cmd.cooldown.delay;
+            } else {
+                const errorEmbed = new EmbedBuilder()
+                    .setColor('#303434')
+                    .setDescription(
+                        `Hey! This command is on cooldown. It will be available in ${ms(
+                            callDelayData - Date.now(),
+                            { long: true }
+                        )}}`
+                    );
+
+                message.reply({ embeds: [errorEmbed] });
+            }
+        }
+
+        return Grant;
+    },
+};
+
+const LR_DelaysUser: LegacyRules = {
+    ruleName: 'Command Delays',
+    run: (message: Message, cmd: LegacyCommand) => {
+        if (!cmd.cooldown?.gloabl) return true;
+
+        let Grant = false;
+
+        const callDelayData =
+            userLegacyDelays[`${message.author.id}_${cmd.name}`];
+
+        if (!callDelayData) {
+            Grant = true;
+            userLegacyDelays[`${message.author.id}_${cmd.name}`] =
+                Date.now() + cmd.cooldown.delay;
+        } else if (callDelayData) {
+            if (callDelayData - Date.now() <= 0) {
+                Grant = true;
+                userLegacyDelays[`${message.author.id}_${cmd.name}`] =
+                    Date.now() + cmd.cooldown.delay;
+            } else {
+                const errorEmbed = new EmbedBuilder()
+                    .setColor('#303434')
+                    .setDescription(
+                        `Hey! This command is on cooldown. It will be available in ${ms(
+                            callDelayData - Date.now(),
+                            { long: true }
+                        )}}`
+                    );
+
+                message.reply({ embeds: [errorEmbed] });
+            }
+        }
+
+        return Grant;
+    },
+};
+
+const LR_DeveloperOnly: LegacyRules = {
+    ruleName: 'Developer Only',
+    run: (message: Message, cmd: LegacyCommand) => {
+        if (!cmd.developerMode) return true;
+
+        const Grant = message.author.id === GLOBALS.DevId;
+
+        if (!Grant) {
+            const errorEmbed = new EmbedBuilder()
+                .setColor('#303434')
+                .setDescription('This command is in developer only mode!');
+                
+        }
+    },
+};
 
 export const LegacyRulesArray: LegacyRules[] = [
     LegacyRolesRequired,
     LR_PermissionRequired,
-    // LR_Delays,
+    LR_DelaysGlobal,
+    LR_DelaysUser,
 ];

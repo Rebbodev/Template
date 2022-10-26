@@ -14,10 +14,11 @@ export function LegacyBuilder(
             allRoles?: boolean;
         };
         permission?: PermissionResolvable[];
-        delay?: { delay: number; gloabl: boolean };
+        cooldown?: { delay: number; gloabl: boolean };
         doNotRegister?: boolean;
         developerMode?: boolean;
     },
+    // eslint-disable-next-line unused-imports/no-unused-vars
     run: (message: Message, arguments_: string[]) => Promise<any>
 ): LegacyCommand {
     const cmd: LegacyCommand = { name, ...data, run };

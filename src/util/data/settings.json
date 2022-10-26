@@ -4,5 +4,11 @@
     "lc-enabled": true,
     "sc-enabled": true,
 
-    "sc-guilds": []
+    "sc-guilds": [],
+
+    "filePaths": {
+        "globalLegacyDelays": "/src/util/data/legacy-delays/global.json",
+        "userLegacyDelays": "/src/util/data/legacy-delays/user.json"
+
+    }
 }

@@ -9,7 +9,7 @@ export function SlashBuilder(
         update: boolean;
         requiredRoles?: { roles: string[]; admin?: boolean };
         guildOnly: boolean;
-        delay?: { delay: number; gloabl: boolean };
+        cooldown?: { delay: number; gloabl: boolean };
         developerMode?: boolean;
     },
     // eslint-disable-next-line unused-imports/no-unused-vars
