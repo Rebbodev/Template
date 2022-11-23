@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/numeric-separators-style */
 import {
     ActionRowBuilder,
     APIEmbedField,
@@ -7,16 +8,17 @@ import {
     RestOrArray,
 } from 'discord.js';
 
-import { BotClient } from '../..';
+import { BotClient, GLOBALS } from '../..';
 import { LegacyBuilder } from '../../util/functions/LegacyCMDS';
 import { legacyCommandRaw } from '../RawCollecter';
 
 export const L_helpCommand = LegacyBuilder(
     'help',
     {
-        description: 'App help menu',
-        syntax: '{category name}',
-        delay: { delay: 2000, gloabl: false },
+        description: 'Help command',
+        syntax: '[category]',
+        category: 'Test',
+        cooldown: { delay: 16000, gloabl: false },
     },
     async (message, arguments_) => {
         const helpEmbed = new EmbedBuilder()
@@ -31,9 +33,11 @@ export const L_helpCommand = LegacyBuilder(
         let index = 0;
 
         for (const category in legacyCommandRaw.helpMenu()) {
-            const newString = `\`{PREFIX}help ${category.toLocaleLowerCase()}\``;
+            const newString = `\`${
+                GLOBALS.Prefix
+            }help ${category.toLocaleLowerCase()}\``;
 
-            if (index++)
+            if (index % 2 !== 0)
                 fieldsObject.push({
                     name: '\u200B',
                     value: '\u200B',
@@ -51,6 +55,8 @@ export const L_helpCommand = LegacyBuilder(
 
         if (!arguments_.at(0)) helpEmbed.addFields(fieldsObject);
 
+        let embedObject = {};
+
         if (arguments_.at(0)) {
             const category: string = arguments_.at(0)?.toLocaleLowerCase()!;
 
@@ -58,21 +64,30 @@ export const L_helpCommand = LegacyBuilder(
 
             const findCategory: object = object[category];
 
+            const mainMenuButton =
+                new ActionRowBuilder<ButtonBuilder>().addComponents(
+                    new ButtonBuilder()
+                        .setStyle(ButtonStyle.Primary)
+                        .setLabel('Main Menu')
+                        .setCustomId('help_menu_main')
+                );
+
             if (findCategory) {
                 helpEmbed.setDescription(object[category]);
+                embedObject = {
+                    embeds: [helpEmbed],
+                    components: [mainMenuButton],
+                };
             } else {
                 helpEmbed.addFields(fieldsObject);
+                embedObject = {
+                    embeds: [helpEmbed],
+                };
+
+                console.log(embedObject);
             }
         }
 
-        const mainMenuButton =
-            new ActionRowBuilder<ButtonBuilder>().addComponents(
-                new ButtonBuilder()
-                    .setStyle(ButtonStyle.Primary)
-                    .setLabel('Main Menu')
-                    .setCustomId('help_menu_main')
-            );
-
-        message.reply({ embeds: [helpEmbed], components: [mainMenuButton] });
+        message.reply(embedObject);
     }
 );

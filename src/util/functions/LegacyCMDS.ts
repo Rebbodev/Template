@@ -1,5 +1,6 @@
 import { Message, PermissionResolvable } from 'discord.js';
 
+import { GLOBALS } from '../..';
 import { LegacyCommand } from '../../types/componentTypes';
 
 export function LegacyBuilder(
@@ -46,7 +47,7 @@ export class LegacyCommandsManager {
 
         for (const cmd of this.commands) {
             const syntaxString = cmd.syntax ? ` ${cmd.syntax}` : '';
-            const newString = `\`{PREFIX}${cmd.name}${syntaxString}\`\n*${cmd.description}*\n\n`;
+            const newString = `\`${GLOBALS.Prefix}${cmd.name}${syntaxString}\`\n*${cmd.description}*\n\n`;
 
             if (
                 cmd.category &&

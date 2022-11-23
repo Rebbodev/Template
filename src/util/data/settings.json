@@ -3,6 +3,7 @@
     "prefix": "!",
     "lc-enabled": true,
     "sc-enabled": true,
+    "legacy-delays-enabled": true,
 
     "sc-guilds": [],
 

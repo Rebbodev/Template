@@ -18,20 +18,20 @@ export type LegacyRules = {
 export const LegacyRolesRequired: LegacyRules = {
     ruleName: 'Required Roles',
     run: (message: Message, cmd: LegacyCommand) => {
-        if (!cmd.requiredRoles) return true;
+        if (
+            !cmd.requiredRoles ||
+            (cmd.requiredRoles.admin &&
+                message.member?.permissions.has('Administrator'))
+        )
+            return true;
 
-        const { roles, allRoles, admin } = cmd.requiredRoles;
+        const { roles, allRoles } = cmd.requiredRoles;
 
-        const checkType = allRoles
-            ? message.member?.roles.cache.hasAll(...roles)
-            : message.member?.roles.cache.hasAny(...roles);
+        if (!message.member) return false;
 
-        const Grant = !(
-            (!checkType && !admin) ||
-            (!checkType &&
-                admin &&
-                !message.member?.permissions.has('Administrator'))
-        );
+        const Grant = allRoles
+            ? message.member.roles.cache.hasAll(...roles)
+            : message.member.roles.cache.hasAny(...roles);
 
         if (!Grant) {
             const RoleBuild = roles
@@ -55,12 +55,12 @@ export const LegacyRolesRequired: LegacyRules = {
 const LR_PermissionRequired: LegacyRules = {
     ruleName: 'Permission Required',
     run: (message: Message, cmd: LegacyCommand) => {
-        if (!cmd.permission) return true;
+        if (!cmd.permission || message.member?.permissions.has('Administrator'))
+            return true;
 
-        const firstCheck = message.member?.permissions.has(cmd.permission);
-        const secondCheck = message.member?.permissions.has('Administrator');
+        if (!message.member) return false;
 
-        const Grant = !(!firstCheck && !secondCheck);
+        const Grant = message.member?.permissions.has(cmd.permission);
 
         if (!Grant) {
             const errorString = `Hey! You need the permissions ${cmd.permission.join(
@@ -115,7 +115,7 @@ const LR_DelaysGlobal: LegacyRules = {
 const LR_DelaysUser: LegacyRules = {
     ruleName: 'Command Delays',
     run: (message: Message, cmd: LegacyCommand) => {
-        if (!cmd.cooldown?.gloabl) return true;
+        if (!cmd.cooldown || cmd.cooldown?.gloabl) return true;
 
         let Grant = false;
 
@@ -138,7 +138,7 @@ const LR_DelaysUser: LegacyRules = {
                         `Hey! This command is on cooldown. It will be available in ${ms(
                             callDelayData - Date.now(),
                             { long: true }
-                        )}}`
+                        )}`
                     );
 
                 message.reply({ embeds: [errorEmbed] });
@@ -160,8 +160,11 @@ const LR_DeveloperOnly: LegacyRules = {
             const errorEmbed = new EmbedBuilder()
                 .setColor('#303434')
                 .setDescription('This command is in developer only mode!');
-                
+
+            message.channel.send({ embeds: [errorEmbed] });
         }
+
+        return Grant;
     },
 };
 
@@ -170,4 +173,5 @@ export const LegacyRulesArray: LegacyRules[] = [
     LR_PermissionRequired,
     LR_DelaysGlobal,
     LR_DelaysUser,
+    LR_DeveloperOnly,
 ];

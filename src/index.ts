@@ -5,7 +5,7 @@ import { build } from './core/projectBuilder';
 // import delayData from './util/data/delays.json';
 import { JsonData } from './util/functions/jsonData';
 
-const JsonCtrl = new JsonData('/src/util/data/settings.json');
+export const JsonCtrl = new JsonData('/src/util/data/settings.json');
 
 environmentConfig();
 const proccessENV = process.env;
