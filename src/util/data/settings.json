@@ -1,9 +1,9 @@
 {
     "dev-id": "984027568166539265",
     "prefix": "!",
-    "lc-enabled": true,
+    "lc-enabled": false,
     "sc-enabled": true,
-    "legacy-delays-enabled": true,
+    "legacy-delays-enabled": false,
     "slash-delays-enables": true,
 
     "sc-guilds": [],

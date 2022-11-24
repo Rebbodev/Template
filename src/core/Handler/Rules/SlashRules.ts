@@ -96,7 +96,7 @@ const SR_DelaysGlobal: SlashRules = {
                         `Hey! This command is on cooldown. It will be available in ${ms(
                             callDelayData - Date.now(),
                             { long: true }
-                        )}}`
+                        )}`
                     );
 
                 if (!interaction.isChatInputCommand()) return false;

@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/prefer-at */
 /* eslint-disable unicorn/numeric-separators-style */
 import {
     ActionRowBuilder,
@@ -17,8 +18,7 @@ export const L_helpCommand = LegacyBuilder(
     {
         description: 'Help command',
         syntax: '[category]',
-        category: 'Test',
-        cooldown: { delay: 16000, gloabl: false },
+        category: 'Help',
     },
     async (message, arguments_) => {
         const helpEmbed = new EmbedBuilder()
@@ -31,6 +31,8 @@ export const L_helpCommand = LegacyBuilder(
         const fieldsObject: RestOrArray<APIEmbedField> = [];
 
         let index = 0;
+
+        console.log(legacyCommandRaw.helpMenu());
 
         for (const category in legacyCommandRaw.helpMenu()) {
             const newString = `\`${
@@ -53,11 +55,9 @@ export const L_helpCommand = LegacyBuilder(
             index++;
         }
 
-        if (!arguments_.at(0)) helpEmbed.addFields(fieldsObject);
-
         let embedObject = {};
 
-        if (arguments_.at(0)) {
+        if (arguments_[0]) {
             const category: string = arguments_.at(0)?.toLocaleLowerCase()!;
 
             const object: any = legacyCommandRaw.helpMenu();
@@ -83,11 +83,14 @@ export const L_helpCommand = LegacyBuilder(
                 embedObject = {
                     embeds: [helpEmbed],
                 };
-
-                console.log(embedObject);
             }
+        } else {
+            helpEmbed.addFields(fieldsObject);
+            embedObject = {
+                embeds: [helpEmbed],
+            };
         }
 
-        message.reply(embedObject);
+        message.channel.send(embedObject);
     }
 );

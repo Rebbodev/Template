@@ -101,7 +101,7 @@ const LR_DelaysGlobal: LegacyRules = {
                         `Hey! This command is on cooldown. It will be available in ${ms(
                             callDelayData - Date.now(),
                             { long: true }
-                        )}}`
+                        )}`
                     );
 
                 message.reply({ embeds: [errorEmbed] });
