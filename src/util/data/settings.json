@@ -4,6 +4,7 @@
     "lc-enabled": true,
     "sc-enabled": true,
     "legacy-delays-enabled": true,
+    "slash-delays-enables": true,
 
     "sc-guilds": [],
 

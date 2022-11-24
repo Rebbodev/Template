@@ -11,7 +11,7 @@ export type SlashCommand = {
     data: ChatInputApplicationCommandData;
     kill?: boolean;
     update: boolean;
-    requiredRoles?: { roles: string[]; admin?: boolean };
+    requiredRoles?: { roles: string[]; admin?: boolean; allRoles?: boolean };
     guildOnly: boolean;
     cooldown?: { delay: number; gloabl: boolean };
     developerMode?: boolean;

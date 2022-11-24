@@ -8,6 +8,7 @@ import {
     GuildCommand,
     SlashCommand as SlashCommandClass,
 } from '../../util/functions/Slash-Commands/manager';
+import { SlashRulesArray } from './Rules/SlashRules';
 
 export const SlashCommands: {
     [key: string]: SlashCommand;
@@ -131,6 +132,16 @@ export const E_SlashCommandListner: DiscordEvent = {
 
             return;
         }
+
+        let Permission = true;
+
+        for (const rule of SlashRulesArray) {
+            const call = rule.run(interaction, cmd);
+
+            if (!call) Permission = false;
+        }
+
+        if (!Permission) return;
 
         await cmd.run(interaction);
     },
